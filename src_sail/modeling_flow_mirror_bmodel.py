@@ -312,7 +312,10 @@ class CNHubert:
 
     
     def get_input_ids(self, wav_data):
-        wav = self.read_audio(wav_data).astype(np.float32)
+        if isinstance(wav_data, str):
+            wav = self.read_audio(wav_data).astype(np.float32)
+        else:
+            wav = wav_data
         codes = self(wav).astype(np.int32)
         codes = self.deduplicates(codes)
         label_text = self.convert_label_to_text(codes)
