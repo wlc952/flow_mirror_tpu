@@ -315,7 +315,7 @@ class CNHubert:
         if isinstance(wav_data, str):
             wav = self.read_audio(wav_data).astype(np.float32)
         else:
-            wav = wav_data
+            wav = wav_data.astype(np.float32)
         codes = self(wav).astype(np.int32)
         codes = self.deduplicates(codes)
         label_text = self.convert_label_to_text(codes)
@@ -781,8 +781,9 @@ class FlowmirrorForConditionalGeneration:
             or generation_config.eos_token_id in output_ids
         )
         if not decode_sequentially:
-            print("output_ids.shape:", output_ids.shape)
-            raise ValueError("Please retry")
+            output_ids  = np.pad(output_ids, ((0, 0), (0, 0), (0,0), (0, 512 - output_ids.shape[-1])), mode="edge")
+            output_values = self.model([output_ids], net_num=-1)[0]
+            output_values = output_values.squeeze(1)
         else:
             output_values = []
             for sample_id in range(batch_size):
@@ -837,7 +838,7 @@ class FlowmirrorForConditionalGeneration:
         while not this_peer_finished:
             # prepare model inputs
             model_inputs = self.prepare_inputs_for_generation(input_ids, **model_kwargs)
-            print(model_inputs['decoder_input_ids'])
+            # print(model_inputs['decoder_input_ids'])
 
             # forward pass to get next token
             lm_logits, k_cache_list, v_cache_list, cache_lenth = self(**model_inputs)
