@@ -856,7 +856,7 @@ class FlowmirrorForConditionalGeneration:
             if eos_token_id is not None:
                 if pad_token_id is None:
                     raise ValueError("If `eos_token_id` is defined, make sure that `pad_token_id` is defined.")
-                # next_tokens = next_tokens * unfinished_sequences + pad_token_id * (1 - unfinished_sequences)
+                next_tokens = next_tokens * unfinished_sequences + pad_token_id * (1 - unfinished_sequences)
                         
             # update generated ids, model inputs, and length for next step
             input_ids = np.concatenate([input_ids, next_tokens[:, None]], axis=-1)

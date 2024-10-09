@@ -1,6 +1,6 @@
 import numpy as np
 import soundfile as sf
-from time import time
+import time
 from transformers import AutoFeatureExtractor
 from modeling_flow_mirror_bmodel import *
 
@@ -16,7 +16,7 @@ input_ids = hubert.get_input_ids(wav_data)
 input_ids = np.pad(input_ids, ((0,0),(IDS_LENGTH - input_ids.shape[1], 0)))
 
 ### method 1
-speaker_embedding = np.load("models/speaker_embedding.npz")['speaker_embedding_1']
+speaker_embedding = np.load("models/speaker_embedding.npz")['speaker_embedding_2']
 
 
 # #### method 2
@@ -32,12 +32,12 @@ speaker_embedding = np.load("models/speaker_embedding.npz")['speaker_embedding_1
 
 model = FlowmirrorForConditionalGeneration(model_dir="models", config=Config("configs/config.json"), device_id=0)
 
-start = time()
+start = time.time()
 i = 0
 conti = True
 while conti:
     generation, text_completion = model.generate(prompt_input_ids=input_ids, speaker_embedding=speaker_embedding)
-    end = time()
+    end = time.time()
     if (generation == 0.0).all(): conti = True
     else:  conti = False
     i += 1
@@ -46,4 +46,8 @@ print("Time taken: ", end - start)
 print("i:", i-1)
 
 audio_arr = generation.squeeze()
+audio_arr = audio_arr - np.min(audio_arr)
+max_audio=np.max(audio_arr)
+if max_audio>1: audio_arr/=max_audio
+audio_arr = (audio_arr * 32768).astype(np.int16)
 sf.write("answer.wav", audio_arr, 16000)
