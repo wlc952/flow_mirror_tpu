@@ -2,11 +2,15 @@
 
 Flow_mirror on Sophgo SG2300x
 
-## Download models
+## Prepare environment and  Download models
 
 ```bash
-git lfs install
-git clone https://huggingface.co/wlc952/Flow_Mirror_TPU
+python3 -m venv fm_venv
+source fm_venv/bin/activate
+sudo chmod +x prepare.sh
+sudo chmod +x download.sh
+bash prepare.sh
+bash download.sh
 ```
 
 ## Inference on Sophgo SG2300x
