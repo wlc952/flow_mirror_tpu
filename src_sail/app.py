@@ -36,18 +36,19 @@ def app(question):
     answer = (answer * 32768).astype(np.int16)
     return 16000, answer
 
-# 加载模型
-hubert = CNHubert("models")
-model = FlowmirrorForConditionalGeneration(model_dir="models", config=Config("configs/config.json"), device_id=0)
-speaker_embedding = np.load("models/speaker_embedding.npz")['speaker_embedding_1']
+if __name__ == "__main__":
+    # 加载模型
+    hubert = CNHubert("models")
+    model = FlowmirrorForConditionalGeneration(model_dir="models", config=Config("configs/config.json"), device_id=0)
+    speaker_embedding = np.load("models/speaker_embedding.npz")['speaker_embedding_1']
 
-# 创建 Gradio 界面
-iface = gr.Interface(
-    fn=app,
-    inputs="audio",
-    outputs="audio",
-    title="心流知镜",
-)
+    # 创建 Gradio 界面
+    iface = gr.Interface(
+        fn=app,
+        inputs="audio",
+        outputs="audio",
+        title="心流知镜",
+    )
 
-# 启动界面
-iface.launch()
+    # 启动界面
+    iface.launch()

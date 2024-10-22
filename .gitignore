@@ -1,3 +1,5 @@
 answer.wav
 __pycache__
 models
+*venv
+flagged
